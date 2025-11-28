@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucas Matthes | Portfolio Interactif</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bg-main': '#121212',
+                        'bg-card': '#18181b', 
+                        'text-main': '#EDEDED',
+                        'text-muted': '#A1A1AA',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #121212; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- STYLE DES CARTES (GRID) --- */
+        .card-media-container {
+            background-color: #121212;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Mode "Aperçu" : On zoome pour remplir la case */
+        .card-media {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            transition: transform 0.7s ease;
+        }
+        
+        .group:hover .card-media {
+            transform: scale(1.05);
+        }
+
+        /* --- STYLE DE LA LIGHTBOX (PLEIN ÉCRAN) --- */
+        #lightbox { display: none; }
+        #lightbox.active { display: flex; }
+
+        /* Mode "Plein écran" : On voit tout le contenu */
+        .lightbox-media {
+            max-width: 100%;
+            max-height: 85vh; 
+            object-fit: contain; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-bg-main text-text-main font-sans antialiased">
+
+    <div class="max-w-5xl mx-auto px-6 md:px-12 pb-20">
+
+        <header class="py-12 md:py-20 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div>
+                <h1 class="text-4xl md:text-5xl font-bold tracking-tight">Lucas Matthes</h1>
+                <p class="text-text-muted mt-2 text-lg">Créateur Vidéo & Directeur Artistique</p>
+            </div>
+            
+            <nav>
+                <ul class="flex gap-8 text-sm font-medium text-text-muted">
+                    <li><a href="#about" class="hover:text-white transition-colors duration-300">À propos</a></li>
+                    <li><a href="#work" class="hover:text-white transition-colors duration-300">Projets</a></li>
+                    <li><a href="#contact" class="hover:text-white transition-colors duration-300">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <div class="w-full h-px bg-white/10 mb-16"></div>
+
+        <section id="about" class="mb-32">
+            <div class="flex flex-col md:flex-row items-center gap-12 bg-bg-card p-8 md:p-12 rounded-2xl border border-white/5 shadow-sm">
+                <div class="shrink-0">
+                    <div class="w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden border-2 border-white/10 bg-zinc-800">
+                        <img src="assets/PP.jpg" 
+                             alt="Lucas Matthes" 
+                             class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <h2 class="text-2xl font-semibold mb-4 text-white">Créatif polyvalent.</h2>
+                    <p class="text-text-muted leading-relaxed text-lg">
+                        Passionné par l'image sous toutes ses formes, je navigue entre la <strong>réalisation vidéo</strong> et la <strong>direction artistique</strong>. 
+                        Mon approche combine technique rigoureuse et sensibilité esthétique pour créer des narrations visuelles fortes.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="work" class="mb-32">
+            
+            <div class="flex flex-wrap gap-4 mb-12">
+                <button onclick="filterProjects('all')" class="filter-btn active px-5 py-2 rounded-full text-sm font-medium border border-white/10 bg-white text-black transition-all">Tout</button>
+                <button onclick="filterProjects('video')" class="filter-btn px-5 py-2 rounded-full text-sm font-medium border border-white/10 bg-transparent text-text-muted hover:text-white hover:border-white/30 transition-all">Vidéo</button>
+                <button onclick="filterProjects('photo')" class="filter-btn px-5 py-2 rounded-full text-sm font-medium border border-white/10 bg-transparent text-text-muted hover:text-white hover:border-white/30 transition-all">Photo</button>
+            </div>
+
+            <div class="grid gap-12" id="project-container">
+                <p class="text-xs text-text-muted mb-4 italic col-span-full">* Clique sur un projet pour voir tous les médias en haute qualité.</p>
+
+                <article class="project-card cursor-pointer group relative bg-bg-card rounded-xl overflow-hidden border border-white/5 hover:border-white/20 transition-all duration-300 hover:-translate-y-1" 
+                         data-category="video"
+                         onclick="openLightbox(['assets/CM.mp4'])">
+                    <div class="flex flex-col md:flex-row h-full">
+                        <div class="w-full md:w-1/2 h-64 md:h-80 card-media-container">
+                            <video autoplay loop muted playsinline class="card-media">
+                                <source src="assets/CM.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center relative">
+                            <div class="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>
+                            </div>
+                            <span class="text-xs font-bold tracking-wider text-white/40 uppercase mb-2">Court Métrage</span>
+                            <h3 class="text-2xl font-bold text-white mb-4">Au-delà du vide</h3>
+                            <p class="text-text-muted leading-relaxed mb-6">
+                                Fiction introspective. Réalisation complète, du tournage au montage, avec un accent sur l'atmosphère.
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="project-card cursor-pointer group relative bg-bg-card rounded-xl overflow-hidden border border-white/5 hover:border-white/20 transition-all duration-300 hover:-translate-y-1" 
+                         data-category="video"
+                         onclick="openLightbox(['assets/FRAMMI_1.mp4', 'assets/FRAMMI_2.mp4', 'assets/FRAMMI_3.mp4'])">
+                    <div class="flex flex-col md:flex-row h-full">
+                        <div class="w-full md:w-1/2 h-64 md:h-80 card-media-container">
+                            <video autoplay loop muted playsinline class="card-media">
+                                <source src="assets/FRAMMI_1.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center relative">
+                            <div class="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>
+                            </div>
+                            <span class="text-xs font-bold tracking-wider text-white/40 uppercase mb-2">Événementiel & Social Media</span>
+                            <h3 class="text-2xl font-bold text-white mb-4">FRAMMI</h3>
+                            <p class="text-text-muted leading-relaxed mb-6">
+                                Aftermovie et gestion réseaux sociaux. Clique pour découvrir les 3 capsules vidéo.
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="project-card cursor-pointer group relative bg-bg-card rounded-xl overflow-hidden border border-white/5 hover:border-white/20 transition-all duration-300 hover:-translate-y-1" 
+                         data-category="video"
+                         onclick="openLightbox(['assets/GV_1.mp4', 'assets/GV_2.mp4'])">
+                    <div class="flex flex-col md:flex-row h-full">
+                        <div class="w-full md:w-1/2 h-64 md:h-80 card-media-container">
+                            <video autoplay loop muted playsinline class="card-media">
+                                <source src="assets/GV_1.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center relative">
+                            <div class="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>
+                            </div>
+                            <span class="text-xs font-bold tracking-wider text-white/40 uppercase mb-2">Média & DA</span>
+                            <h3 class="text-2xl font-bold text-white mb-4">Game & Vibes</h3>
+                            <p class="text-text-muted leading-relaxed mb-6">
+                                Création de média culturel. Identité visuelle, montage et stratégie.
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="project-card cursor-pointer group relative bg-bg-card rounded-xl overflow-hidden border border-white/5 hover:border-white/20 transition-all duration-300 hover:-translate-y-1" 
+                         data-category="video"
+                         onclick="openLightbox(['assets/INTERVIEW.mp4'])">
+                    <div class="flex flex-col md:flex-row h-full">
+                        <div class="w-full md:w-1/2 h-64 md:h-80 card-media-container">
+                            <video autoplay loop muted playsinline class="card-media">
+                                <source src="assets/INTERVIEW.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center relative">
+                            <div class="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>
+                            </div>
+                            <span class="text-xs font-bold tracking-wider text-white/40 uppercase mb-2">Studio & Light</span>
+                            <h3 class="text-2xl font-bold text-white mb-4">Lumières Interview</h3>
+                            <p class="text-text-muted leading-relaxed mb-6">
+                                Mise en place lighting et colorimétrie pour un rendu professionnel.
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="project-card cursor-pointer group relative bg-bg-card rounded-xl overflow-hidden border border-white/5 hover:border-white/20 transition-all duration-300 hover:-translate-y-1" 
+                         data-category="photo"
+                         onclick="openLightbox(['assets/PHOTO_DA.jpg'])">
+                    <div class="flex flex-col md:flex-row h-full">
+                        <div class="w-full md:w-1/2 h-64 md:h-80 card-media-container">
+                            <img src="assets/PHOTO_DA.jpg" class="card-media" alt="Shooting Artémyx">
+                        </div>
+                        <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center relative">
+                            <div class="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>
+                            </div>
+                            <span class="text-xs font-bold tracking-wider text-white/40 uppercase mb-2">DA Photo</span>
+                            <h3 class="text-2xl font-bold text-white mb-4">Campagne Artémyx</h3>
+                            <p class="text-text-muted leading-relaxed mb-6">
+                                Shooting photo urbain pour collection de bobs.
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <footer id="contact" class="py-16 border-t border-white/10">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="text-center md:text-left">
+                    <h4 class="text-white font-bold text-lg">Lucas Matthes</h4>
+                    <p class="text-text-muted text-sm mt-1">© 2025 Tous droits réservés.</p>
+                </div>
+                <div class="flex items-center gap-8">
+                    <a href="https://www.linkedin.com/in/lucas-matthes-76a281296/" target="_blank" class="text-text-muted hover:text-white transition-colors">LinkedIn</a>
+                    <a href="#" class="text-text-muted hover:text-white transition-colors">Instagram</a>
+                    <a href="mailto:tonemail@exemple.com" class="text-text-muted hover:text-white transition-colors">Email</a>
+                </div>
+                <a href="#" class="px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                    Télécharger CV
+                </a>
+            </div>
+        </footer>
+
+    </div>
+
+    <div id="lightbox" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md items-center justify-center p-4 md:p-10 transition-opacity duration-300">
+        
+        <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white/70 hover:text-white z-50 p-2 bg-black/20 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 md:w-10 md:h-10">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+
+        <div class="relative w-full h-full flex items-center justify-center">
+            
+            <button id="prevBtn" onclick="prevSlide()" class="absolute left-0 md:left-4 z-40 p-3 md:p-4 text-white hover:scale-110 transition-transform bg-black/20 rounded-full hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 md:w-10 md:h-10">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+            </button>
+
+            <div id="lightbox-content" class="w-full h-full flex items-center justify-center">
+                </div>
+
+            <button id="nextBtn" onclick="nextSlide()" class="absolute right-0 md:right-4 z-40 p-3 md:p-4 text-white hover:scale-110 transition-transform bg-black/20 rounded-full hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 md:w-10 md:h-10">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+            </button>
+        </div>
+        
+        <div id="slide-counter" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/80 font-mono text-sm bg-black/50 px-3 py-1 rounded-full"></div>
+    </div>
+
+    <script>
+        // --- FILTRES ---
+        function filterProjects(category) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-white', 'text-black');
+                btn.classList.add('bg-transparent', 'text-text-muted');
+                if (btn.getAttribute('onclick').includes(category)) {
+                    btn.classList.remove('bg-transparent', 'text-text-muted');
+                    btn.classList.add('bg-white', 'text-black');
+                }
+            });
+
+            const projects = document.querySelectorAll('.project-card');
+            projects.forEach(card => {
+                card.classList.remove('fade-in');
+                void card.offsetWidth; 
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                    card.classList.add('fade-in');
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // --- LIGHTBOX (GALERIE) ---
+        let currentMediaList = [];
+        let currentIndex = 0;
+        const lightbox = document.getElementById('lightbox');
+        const container = document.getElementById('lightbox-content');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const counter = document.getElementById('slide-counter');
+
+        function openLightbox(mediaArray) {
+            currentMediaList = mediaArray;
+            currentIndex = 0;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden'; 
+            renderMedia();
+            updateButtons();
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            container.innerHTML = ''; 
+            document.body.style.overflow = 'auto'; 
+        }
+
+        function renderMedia() {
+            const file = currentMediaList[currentIndex];
+            // Vérification basique de l'extension
+            const isVideo = file.toLowerCase().endsWith('.mp4') || file.toLowerCase().endsWith('.mov') || file.toLowerCase().endsWith('.webm');
+
+            container.innerHTML = ''; 
+
+            if (isVideo) {
+                const video = document.createElement('video');
+                video.controls = true;
+                video.autoplay = true;
+                video.className = "lightbox-media"; 
+                
+                const sourceMP4 = document.createElement('source');
+                sourceMP4.src = file;
+                sourceMP4.type = "video/mp4";
+                
+                video.appendChild(sourceMP4);
+                container.appendChild(video);
+            } else {
+                const img = document.createElement('img');
+                img.src = file;
+                img.className = "lightbox-media";
+                container.appendChild(img);
+            }
+            
+            // Compteur
+            if(currentMediaList.length > 1) {
+                counter.innerText = `${currentIndex + 1} / ${currentMediaList.length}`;
+                counter.style.display = 'block';
+            } else {
+                counter.style.display = 'none';
+            }
+        }
+
+        function nextSlide() {
+            if (currentIndex < currentMediaList.length - 1) {
+                currentIndex++;
+                renderMedia();
+                updateButtons();
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderMedia();
+                updateButtons();
+            }
+        }
+
+        function updateButtons() {
+            if (currentMediaList.length > 1) {
+                prevBtn.style.display = currentIndex > 0 ? 'block' : 'none';
+                nextBtn.style.display = currentIndex < currentMediaList.length - 1 ? 'block' : 'none';
+            } else {
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+            }
+        }
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox || (e.target.closest('#lightbox-content') === null && e.target.tagName !== 'BUTTON' && e.target.closest('button') === null)) {
+                closeLightbox();
+            }
+        });
+        
+        document.addEventListener('keydown', function(event) {
+            if (lightbox.classList.contains('active')) {
+                if (event.key === "Escape") closeLightbox();
+                if (event.key === "ArrowRight") nextSlide();
+                if (event.key === "ArrowLeft") prevSlide();
+            }
+        });
+    </script>
+</body>
+</html>
